@@ -1,6 +1,8 @@
 # DevOps-Challenge
 DevOps challenge for interns in Acklen Avenue.
 
+Every CLI configuration is assumed to be done before starting, meaning AWS CLI, Terraform and Ansible.
+
 Step 1
 
 Run git clone https://github.com/B4rz99/DevOps-Challenge.git
@@ -15,7 +17,7 @@ Step 3
 
 Run terraform plan
 
-It will ask you for your public IP for SSH access. You can consult it here https://whatismyipaddress.com and type it in the console. Check the plan to make sure everything is in order.
+It will ask you for your public IP for SSH access. You can consult it here https://whatismyipaddress.com and type it in the console adding a "/32" at the end. Check the plan to make sure everything is in order.
 
 Step 4
 
@@ -49,14 +51,21 @@ Run ansible -i aws_ec2.yml all -m ping
 
 This will ensure you have SSH access to EC2 instances
 
+You will be asked twice to continue connecting to EC2 instances, simply type "yes" twice.
+
 Step 9
-
-Run ansible-inventory -i aws_ec2.yaml --list
-
-This will list the ec2 instances deployed that have the tag "Environmet:Intern" and check where will the app deploy
-
-Step 10
 
 Run ansible-playbook -i aws_ec2.yml deploy_node_app.yml
 
 This will deploy the app in the EC2 instances.
+
+Step 10
+
+Navigate to terraform directory
+
+Run terraform output
+
+You will see the ALB DNS name, copy and paste it adding "http://" before the link.
+
+
+After you're done remember running terraform destroy --auto-approve=true to shut down every AWS resource.
