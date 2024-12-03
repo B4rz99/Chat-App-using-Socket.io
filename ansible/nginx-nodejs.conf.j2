@@ -1,0 +1,23 @@
+server {
+    listen 80;
+    server_name _;  # A wildcard for any incoming requests
+
+    # Main route to proxy Node.js app
+    location / {
+        proxy_pass http://localhost:5000;  # Proxy to Node.js app on port 5000
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        add_header X-Content-Type-Options nosniff;  # Prevent MIME type sniffing
+    }
+
+    location /socket.io/ {
+        proxy_pass http://localhost:5000;  # Ensure WebSocket traffic is also forwarded
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}

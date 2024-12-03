@@ -1,0 +1,100 @@
+- name: Install Node.js and ensure app is always running
+  hosts: all
+  become: true
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install curl
+      apt:
+        name: curl
+        state: present
+
+    - name: Add NodeSource repository
+      shell: 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -'
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Verify Node.js installation
+      command: node -v
+      register: node_version
+
+    - name: Debug Node.js version
+      debug:
+        msg: "Installed Node.js version: {{ node_version.stdout }}"
+
+    - name: Install pm2 globally
+      npm:
+        name: pm2
+        global: yes
+        state: present
+
+    - name: Configure pm2 to start on boot
+      shell: |
+        pm2 startup
+        pm2 save
+      args:
+        creates: /etc/systemd/system/pm2-ubuntu.service
+
+    - name: Copy Node.js app to EC2 instance
+      ansible.builtin.copy:
+        src:
+        dest: /home/ubuntu/app/
+        mode: '0755'
+
+    - name: Install Node.js dependencies
+      ansible.builtin.command:
+        cmd: npm install
+        chdir: /home/ubuntu/app
+
+    - name: Start the Node.js app with pm2
+      ansible.builtin.command:
+        cmd: pm2 start /home/ubuntu/app/app.js --name "my-node-app" -f
+
+    - name: Save pm2 process list
+      ansible.builtin.command:
+        cmd: pm2 save
+
+    - name: Ensure Nginx is installed
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Copy Nginx configuration
+      ansible.builtin.template:
+        src: nginx-nodejs.conf.j2
+        dest: /etc/nginx/sites-available/nodejs_proxy.conf
+        mode: '0644'
+
+    - name: Enable Nginx site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/nodejs_proxy.conf
+        dest: /etc/nginx/sites-enabled/nodejs_proxy.conf
+        state: link
+
+    - name: Remove the default Nginx site configuration
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Validate Nginx configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_config_test
+      failed_when: nginx_config_test.rc != 0
+      changed_when: false
+
+    - name: Reload Nginx to apply new configuration
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
+
+    - name: Ensure Nginx is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes

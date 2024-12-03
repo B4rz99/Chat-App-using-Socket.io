@@ -9,7 +9,7 @@
   "author": "Kunal Yadav",
   "license": "ISC",
   "dependencies": {
-    "socket.io": "^2.0.3",
-    "express": "*"
+    "express": "*",
+    "socket.io": "^2.0.3"
   }
 }
