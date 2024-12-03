@@ -17,7 +17,7 @@ Step 3
 
 Run terraform plan
 
-It will ask you for your public IP for SSH access. You can consult it here https://whatismyipaddress.com and type it in the console adding a "/32" at the end. Check the plan to make sure everything is in order.
+It will ask you for your public IP for SSH access. You can consult it here https://whatismyipaddress.com and type it in the console adding a "/32" at the end.  Check the plan to make sure everything is in order.
 
 Step 4
 
@@ -35,7 +35,7 @@ Step 6
 
 Now navigate to the ansible directory
 The key pair for EC2 SSH access will be in the terraform directory, you must modify the ansible parameter "private_key_file" from the ansible.cfg file with the .pem file path.
-For example private_key_file = /Users/user1/Dev/Chat-App-using-Socket.io/terraform/AcklenAvenueKeyPair.pem
+For example private_key_file = /Users/user1/Dev/Chat-App-using-Socket.io/terraform/AcklenAvenueKeyPair.pem.  
 Our remote user is "ubuntu" since we are using an ubuntu instance.
 
 Step 7
