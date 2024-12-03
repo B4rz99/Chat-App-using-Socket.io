@@ -68,4 +68,9 @@ Run terraform output
 You will see the ALB DNS name, copy and paste it adding "http://" before the link.
 
 
-After you're done remember running terraform destroy --auto-approve=true to shut down every AWS resource.
+After you're done remember running terraform destroy --auto-approve=true to shut down every AWS resource.  
+
+
+Apart of the variables mentioned in the step by step, the rest of the variables in the project are in the variables.tf file and their content in the terraform.tfvars.  
+
+I read best practice is not to push .tfvars files, but in this case since the challenge required me to deploy EC2's in different AZs I pushed it to demonstrate it, so they are already declared there.
